@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Avelon Drive · Premium car rental, delivered</title>
+  <meta name="description" content="Premium car rental in New York, delivered to your door within the hour. S-Class to Cullinan, detailed, insured and fuelled.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/cars/sclass.webp">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="nav" data-tone="dark">
+    <a class="logo" href="#top" aria-label="Avelon Drive, home">
+      <span class="logo-mark" aria-hidden="true"></span>
+      <span class="logo-word">avelon</span>
+    </a>
+    <nav class="links" aria-label="Primary">
+      <a href="#top" data-link="overview">Overview</a>
+      <a href="#fleet" data-link="fleet">Fleet</a>
+      <a href="#experience" data-link="experience">Experience</a>
+      <a href="#contact" data-link="contact">Contact</a>
+    </nav>
+    <a class="btn btn-nav" href="#contact">Reserve</a>
+    <button class="menu-btn" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <div class="mobile-menu" hidden>
+    <a href="#top">Overview</a>
+    <a href="#fleet">Fleet</a>
+    <a href="#experience">Experience</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <main>
+    <!-- 1. INTRO: dark hero that folds into a card on white -->
+    <section class="intro" id="top">
+      <div class="intro-stage">
+        <div class="intro-white" aria-hidden="true"></div>
+
+        <div class="frame">
+          <div class="frame-light" aria-hidden="true"></div>
+          <div class="hero-car">
+            <img src="assets/cars/sclass.webp" alt="Black Mercedes S-Class long wheelbase, side view" width="1800" height="566">
+            <span class="tail" aria-hidden="true"></span>
+            <span class="head" aria-hidden="true"></span>
+          </div>
+          <div class="frame-floor" aria-hidden="true"></div>
+          <div class="frame-grain" aria-hidden="true"></div>
+        </div>
+
+        <div class="hero-ui">
+          <div class="hero-copy">
+            <span class="chip chip-dark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>New York</span>
+            <p>The car you want, at your door. No counters, no paperwork, just the keys.</p>
+          </div>
+          <h1 class="hero-title">
+            <span class="t-muted">Premium</span>
+            <span class="t-stack"><span>Car</span><span>Rental</span></span>
+          </h1>
+          <a class="scroll-cue" href="#fleet">Scroll <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15m0 0-6-6m6 6 6-6"/></svg></a>
+        </div>
+
+        <div class="about">
+          <p class="about-text words">It's not about getting there. It's about how you arrive. Your car meets you at the door: fuelled, detailed, silent.</p>
+          <a class="btn btn-soft about-btn" href="#contact">Reserve</a>
+        </div>
+
+        <div class="brands" aria-label="Marques in the collection">
+          <div class="brands-track">
+            <span>Mercedes-Benz</span><span>Bentley</span><span>Rolls-Royce</span><span>Range Rover</span><span>Aston Martin</span><span>Maybach</span><span>Porsche</span><span>Maserati</span>
+            <span aria-hidden="true">Mercedes-Benz</span><span aria-hidden="true">Bentley</span><span aria-hidden="true">Rolls-Royce</span><span aria-hidden="true">Range Rover</span><span aria-hidden="true">Aston Martin</span><span aria-hidden="true">Maybach</span><span aria-hidden="true">Porsche</span><span aria-hidden="true">Maserati</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. COLLECTION → FLEET SHOWCASE -->
+    <section class="collection" id="fleet">
+      <div class="col-stage">
+        <p class="col-text words">A private collection, not a car park: S&#8209;Class to Continental&nbsp;GT, each car detailed, insured and at your door within the hour, anywhere in New&nbsp;York.</p>
+
+        <div class="rail" aria-hidden="true"></div>
+
+        <div class="showcase" aria-live="polite">
+          <div class="showcase-cars"></div>
+        </div>
+
+        <div class="fleet-bar">
+          <button class="fb-arrow fb-prev" aria-label="Previous car"><svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg></button>
+          <div class="fb-panel fb-info">
+            <div class="fb-info-text">
+              <h2 class="fb-name">Mercedes S-Class</h2>
+              <p class="fb-desc">Long-wheelbase calm. The city goes quiet behind its doors.</p>
+            </div>
+            <button class="btn btn-grey fb-specs">Specifications</button>
+          </div>
+          <div class="fb-panel fb-loc">
+            <span class="chip chip-light"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg><span class="fb-city">New York</span></span>
+            <span class="chip chip-light chip-count fb-more">+3</span>
+          </div>
+          <div class="fb-panel fb-price">
+            <span class="fb-per">Per day</span>
+            <span class="fb-amount">$300</span>
+            <a class="btn btn-black fb-reserve" href="#contact">Reserve</a>
+          </div>
+          <button class="fb-arrow fb-next" aria-label="Next car"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. EXPERIENCE -->
+    <section class="experience" id="experience">
+      <div class="wrap">
+        <div class="exp-head">
+          <span class="eyebrow">The experience</span>
+          <h2 class="words">Three steps between you and the driver's seat. None of them involve a queue.</h2>
+        </div>
+
+        <ol class="steps">
+          <li class="step">
+            <span class="step-no">01</span>
+            <div class="step-media"><img src="assets/cars/bentley.webp" alt="" loading="lazy"></div>
+            <h3>Choose the car</h3>
+            <p>Pick a model, not a category. The car in the photo is the car that arrives.</p>
+          </li>
+          <li class="step">
+            <span class="step-no">02</span>
+            <div class="step-media"><img src="assets/cars/rangerover.webp" alt="" loading="lazy"></div>
+            <h3>We bring it to you</h3>
+            <p>Home, hotel, office or terminal. A concierge hands over the keys within the hour.</p>
+          </li>
+          <li class="step">
+            <span class="step-no">03</span>
+            <div class="step-media"><img src="assets/cars/spectre.webp" alt="" loading="lazy"></div>
+            <h3>Leave it anywhere</h3>
+            <p>Done driving? Tell us where it is. We collect it, refuel it and handle the rest.</p>
+          </li>
+        </ol>
+
+        <div class="stats">
+          <div class="stat"><span class="stat-num" data-count="47">0</span><span class="stat-unit">min</span><p>Average time from booking to doorstep</p></div>
+          <div class="stat"><span class="stat-num" data-count="24">0</span><span class="stat-unit">/7</span><p>Concierge on call, by phone or message</p></div>
+          <div class="stat"><span class="stat-num" data-count="1">0</span><span class="stat-unit">M</span><p>Dollars of cover included on every rental</p></div>
+          <div class="stat"><span class="stat-num" data-count="0">0</span><span class="stat-unit">forms</span><p>Licence checked once, saved for next time</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. NIGHT BAND -->
+    <section class="night">
+      <div class="night-inner">
+        <p class="night-quote words">"The car was waiting outside the hotel before we'd finished breakfast. That's the whole review."</p>
+        <span class="night-cite">Guest, Rolls-Royce Spectre, Tribeca</span>
+        <div class="night-car"><img src="assets/cars/dbs.webp" alt="Aston Martin DBS Superleggera, side view" loading="lazy"></div>
+      </div>
+    </section>
+
+    <!-- 5. CONTACT / RESERVE -->
+    <section class="contact" id="contact">
+      <div class="wrap contact-grid">
+        <div class="contact-copy">
+          <span class="eyebrow">Reserve</span>
+          <h2>Tell us when and where. We'll handle the keys.</h2>
+          <p class="contact-note">Requests are confirmed by a person, usually in under ten minutes.</p>
+          <ul class="contact-lines">
+            <li><span>Call</span><a href="tel:+12125550188">+1 (212) 555-0188</a></li>
+            <li><span>Write</span><a href="mailto:concierge@avelondrive.com">concierge@avelondrive.com</a></li>
+            <li><span>Garage</span>West 26th St, Chelsea, New York</li>
+          </ul>
+        </div>
+
+        <form class="reserve" novalidate>
+          <div class="field field-wide">
+            <label for="f-car">Car</label>
+            <select id="f-car" name="car"></select>
+          </div>
+          <div class="field">
+            <label for="f-from">Pick-up</label>
+            <input id="f-from" name="from" type="date" required>
+          </div>
+          <div class="field">
+            <label for="f-to">Return</label>
+            <input id="f-to" name="to" type="date" required>
+          </div>
+          <div class="field field-wide">
+            <label for="f-addr">Delivery address</label>
+            <input id="f-addr" name="address" type="text" placeholder="Hotel, home or terminal" autocomplete="street-address" required>
+          </div>
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-phone">Phone</label>
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+          </div>
+          <div class="reserve-foot">
+            <div class="reserve-total"><span>Estimate</span><strong class="est">$300</strong><small class="est-days">1 day</small></div>
+            <button class="btn btn-black btn-lg" type="submit">Request the car</button>
+          </div>
+          <p class="form-msg" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="foot-top">
+        <a class="logo logo-dark" href="#top"><span class="logo-mark" aria-hidden="true"></span><span class="logo-word">avelon</span></a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="#top">Overview</a><a href="#fleet">Fleet</a><a href="#experience">Experience</a><a href="#contact">Contact</a>
+        </nav>
+      </div>
+      <div class="foot-word" aria-hidden="true">avelon drive</div>
+      <div class="foot-bottom">
+        <span>© 2026 Avelon Drive. A design concept.</span>
+        <span class="credits">Car photography via Wikimedia Commons: Vauxford (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>), Harvey Bold (CC0). Backgrounds removed and some images mirrored.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Specs drawer -->
+  <div class="specs" hidden>
+    <div class="specs-scrim" data-close></div>
+    <aside class="specs-panel" role="dialog" aria-modal="true" aria-labelledby="specs-title">
+      <button class="specs-close" data-close aria-label="Close specifications"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div class="specs-car"><img alt=""></div>
+      <h3 id="specs-title" class="specs-name"></h3>
+      <p class="specs-desc"></p>
+      <dl class="specs-list"></dl>
+      <div class="specs-foot">
+        <div><span class="fb-per">Per day</span><strong class="specs-price"></strong></div>
+        <a class="btn btn-black" href="#contact" data-close>Reserve this car</a>
+      </div>
+    </aside>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script src="js/fleet.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
