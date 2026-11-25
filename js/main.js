@@ -2,27 +2,39 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const FLEET = window.FLEET;
+  const BRANDS = window.BRANDS;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const isMobile = () => innerWidth <= 900;
   const money = (n) => "$" + n.toLocaleString("en-US");
+  const pad = (n) => String(n).padStart(2, "0");
+  const countOf = (brand) => FLEET.filter((c) => !brand || c.brand === brand).length;
 
   gsap.registerPlugin(ScrollTrigger);
 
   /* ---------- Smooth scroll ---------- */
   let lenis = null;
   if (!reduce && window.Lenis) {
-    lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1 });
+    lenis = new Lenis({ lerp: 0.1 });
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
   }
   const scrollToY = (y) => (lenis ? lenis.scrollTo(y, { duration: 1.6 }) : window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" }));
 
+  /* ---------- Generated bits ---------- */
+  const track = $(".brands-track");
+  const brandSpans = BRANDS.map((b) => `<span>${b.name}</span>`).join("");
+  track.innerHTML = brandSpans + brandSpans.replace(/<span>/g, '<span aria-hidden="true">');
+
+  $(".credit-list").innerHTML = FLEET.map((c) =>
+    `<li><a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(c.credit.file.replace(/ /g, "_"))}" target="_blank" rel="noopener">${c.full}</a>: ${c.credit.author} (${c.credit.licence})</li>`
+  ).join("");
+
   /* ---------- Split text into words ---------- */
   $$(".words").forEach((el) => {
-    const words = el.textContent.trim().split(/ +/);
-    el.setAttribute("aria-label", el.textContent.trim());
-    el.innerHTML = words.map((w) => `<span class="w" aria-hidden="true">${w}</span>`).join(" ");
+    const text = el.textContent.trim();
+    el.setAttribute("aria-label", text);
+    el.innerHTML = text.split(/ +/).map((w) => `<span class="w" aria-hidden="true">${w}</span>`).join(" ");
   });
   const wordsFrom = { opacity: 0.12, filter: "blur(8px)" };
   const wordsTo = { opacity: 1, filter: "blur(0px)", ease: "none" };
@@ -32,10 +44,9 @@
   const tone = { intro: true, night: false };
   const applyTone = () => { nav.dataset.tone = tone.intro || tone.night ? "dark" : "light"; };
   const setActive = (id) => $$(".links a").forEach((a) => a.classList.toggle("is-active", a.dataset.link === id));
-  setActive("overview");
 
   /* =========================================================
-     1. INTRO: dark hero folds into a card on white
+     1. INTRO
      ========================================================= */
   const frame = $(".frame");
   const heroCar = $(".hero-car");
@@ -45,15 +56,11 @@
     const w = introStage.offsetWidth, h = introStage.offsetHeight;
     if (isMobile()) {
       const width = w - 32;
-      return { left: 16, top: Math.max(74, h * 0.13), width, height: Math.min(h * 0.38, width * 0.78), radius: 18 };
+      return { left: 16, top: Math.max(76, h * 0.13), width, height: Math.min(h * 0.36, width * 0.78), radius: 20 };
     }
     const g = 24, width = w * 0.5 - g - w * 0.015;
-    return { left: g, top: h * 0.2, width, height: Math.min(h * 0.52, width * 0.76), radius: 22 };
+    return { left: g, top: h * 0.2, width, height: Math.min(h * 0.52, width * 0.76), radius: 26 };
   };
-
-  gsap.set(heroCar, { "--carW": isMobile() ? "118%" : "80%" });
-  gsap.set(".about .w", wordsFrom);
-  gsap.set(".about-btn", { autoAlpha: 0, y: 16 });
 
   const introTl = gsap.timeline({
     defaults: { ease: "power2.inOut" },
@@ -70,17 +77,17 @@
         const dark = self.progress < 0.17;
         if (dark !== tone.intro) { tone.intro = dark; applyTone(); }
       },
-      onToggle(self) { if (self.isActive) setActive("overview"); }
+      onToggle(self) { if (self.isActive) setActive(null); }
     }
   });
 
   introTl
     .to(".hero-ui", { autoAlpha: 0, y: -40, filter: "blur(10px)", duration: 0.22, ease: "power1.in" }, 0)
-    .to(".intro-white", { opacity: 1, duration: 0.3, ease: "none" }, 0.06)
+    .to(".intro-paper", { opacity: 1, duration: 0.3, ease: "none" }, 0.06)
     .fromTo(frame, {
       left: 0, top: 0, borderRadius: 0,
-      width: () => frame.parentElement.offsetWidth,
-      height: () => frame.parentElement.offsetHeight
+      width: () => introStage.offsetWidth,
+      height: () => introStage.offsetHeight
     }, {
       left: () => cardRect().left,
       top: () => cardRect().top,
@@ -90,14 +97,15 @@
       duration: 0.42
     }, 0.06)
     .fromTo(heroCar, {
-      "--carW": () => (isMobile() ? "118%" : "80%"),
-      left: () => (isMobile() ? "50%" : "56%"),
-      top: () => (isMobile() ? "50%" : "52%")
+      "--carW": () => (isMobile() ? "118%" : "74%"),
+      left: () => (isMobile() ? "50%" : "58%"),
+      top: () => (isMobile() ? "44%" : "50%")
     }, { "--carW": () => (isMobile() ? "92%" : "96%"), top: "54%", left: "50%", duration: 0.42 }, 0.06)
-    .fromTo(".about .w", wordsFrom, { ...wordsTo, stagger: 0.012, duration: 0.08 }, 0.42)
-    .fromTo(".about-btn", { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.1, ease: "power2.out" }, 0.7)
+    .fromTo(".about .eyebrow", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.06 }, 0.4)
+    .fromTo(".about .w", wordsFrom, { ...wordsTo, stagger: 0.011, duration: 0.08 }, 0.42)
+    .fromTo(".about-btn", { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.1, ease: "power2.out" }, 0.72)
     .to(".brands", { opacity: 1, duration: 0.15, ease: "none" }, 0.55)
-    .to({}, { duration: 0.1 }); // short hold before release
+    .to({}, { duration: 0.1 });
 
   /* =========================================================
      2. COLLECTION → FLEET SHOWCASE
@@ -106,11 +114,12 @@
   const rail = $(".rail");
   const showcase = $(".showcase");
   const showcaseCars = $(".showcase-cars");
-  const bar = $(".fleet-bar");
   let active = 0;
+  let filter = null; // brand id or null for all
+  const pool = () => FLEET.map((c, i) => i).filter((i) => !filter || FLEET[i].brand === filter);
 
-  rail.innerHTML = FLEET.map((c) => `<div class="rail-car" data-id="${c.id}"><img src="${c.img}" alt=""></div>`).join("");
-  showcaseCars.innerHTML = FLEET.map((c, i) => `<img src="${c.img}" alt="${c.name}, side view" data-i="${i}"${i ? ' loading="lazy"' : ""}>`).join("");
+  rail.innerHTML = FLEET.map((c) => `<div class="rail-car"><img src="${c.img}" alt=""></div>`).join("");
+  showcaseCars.innerHTML = FLEET.map((c, i) => `<img src="${c.img}" alt="${c.full}, side view" ${i > 2 ? 'loading="lazy"' : ""}>`).join("");
   const railCars = $$(".rail-car", rail);
   const showImgs = $$("img", showcaseCars);
 
@@ -119,29 +128,23 @@
     railCars.forEach((el, i) => {
       let o = (((i - active) % n) + n) % n;
       if (o > 3) o -= n;
+      const prev = el.dataset.o === undefined ? o : +el.dataset.o;
+      el.style.transition = Math.abs(o - prev) > 2 ? "none" : "";
       el.style.setProperty("--o", o);
       el.classList.toggle("is-center", o === 0);
-      // hide cars that wrap across the whole rail so they don't fly across the screen
-      el.style.transition = Math.abs(o - (parseFloat(el.dataset.o) || o)) > 2 ? "none" : "";
       el.dataset.o = o;
     });
   };
   layoutRail();
   showImgs[active].classList.add("is-active");
 
-  // geometry so the centre rail car lands exactly on the showcase car
   const flip = () => {
     const c = railCars[active];
     const railCy = c.offsetTop + c.offsetHeight / 2;
-    const showCy = showcase.offsetTop;
-    return { s: showcase.offsetWidth / c.offsetWidth, dy: showCy - railCy, ox: c.offsetLeft + c.offsetWidth / 2, oy: railCy };
+    return { s: showcase.offsetWidth / c.offsetWidth, dy: showcase.offsetTop - railCy, ox: c.offsetLeft + c.offsetWidth / 2, oy: railCy };
   };
 
-  gsap.set(".col-text .w", wordsFrom);
   gsap.set(rail, { "--nb": 1 });
-  const style = document.createElement("style");
-  style.textContent = ".rail-car{opacity:var(--nb,1)}.rail-car.is-center{opacity:1}";
-  document.head.appendChild(style);
 
   const colTl = gsap.timeline({
     defaults: { ease: "power2.inOut" },
@@ -152,7 +155,6 @@
       pin: true,
       scrub: 1,
       invalidateOnRefresh: true,
-      // swap the scaled rail for the real showcase once they line up
       onUpdate(self) { colStage.classList.toggle("is-showcase", self.progress >= 0.78); },
       onRefresh(self) { colStage.classList.toggle("is-showcase", self.progress >= 0.78); },
       onToggle(self) { if (self.isActive) setActive("fleet"); }
@@ -162,8 +164,9 @@
   colTl
     .fromTo(rail, { y: () => innerHeight * 0.35, opacity: 0, filter: "blur(10px)" },
       { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.28, ease: "power2.out" }, 0)
-    .to(".col-text .w", { ...wordsTo, stagger: 0.01, duration: 0.08 }, 0.04)
-    .to(".col-text", { autoAlpha: 0, y: -70, filter: "blur(10px)", duration: 0.2, ease: "power1.in" }, 0.46)
+    .fromTo(".col-head .eyebrow", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.06 }, 0.02)
+    .fromTo(".col-text .w", wordsFrom, { ...wordsTo, stagger: 0.01, duration: 0.08 }, 0.04)
+    .to(".col-head", { autoAlpha: 0, y: -70, filter: "blur(10px)", duration: 0.2, ease: "power1.in" }, 0.46)
     .to(rail, { "--nb": 0, duration: 0.16, ease: "none" }, 0.46)
     .to(rail, {
       transformOrigin: () => { const f = flip(); return `${f.ox}px ${f.oy}px`; },
@@ -171,66 +174,132 @@
       y: () => flip().dy,
       duration: 0.3
     }, 0.48)
-    .fromTo(bar, { autoAlpha: 0, y: 50 }, { autoAlpha: 1, y: 0, duration: 0.14, ease: "power2.out" }, 0.8)
+    .fromTo(".fleet-ui", { autoAlpha: 0, y: 50 }, { autoAlpha: 1, y: 0, duration: 0.14, ease: "power2.out" }, 0.8)
     .to({}, { duration: 0.08 });
 
-  /* ---------- Fleet carousel ---------- */
-  const fbName = $(".fb-name"), fbDesc = $(".fb-desc"), fbCity = $(".fb-city"), fbMore = $(".fb-more"), fbAmount = $(".fb-amount");
-  let busy = false;
-
-  const fillBar = (car) => {
-    fbName.textContent = car.name;
-    fbDesc.textContent = car.desc;
-    fbCity.textContent = car.city;
-    fbMore.textContent = "+" + car.more;
-    fbAmount.textContent = money(car.price);
+  /* ---------- Fleet bar + brand tabs ---------- */
+  const fb = {
+    brand: $(".fb-brand"), count: $(".fb-count"), name: $(".fb-name"), desc: $(".fb-desc"),
+    type: $(".fb-type"), more: $(".fb-more"), amount: $(".fb-amount")
   };
-  fillBar(FLEET[active]);
-
-  const go = (dir) => {
-    if (busy) return;
-    busy = true;
-    const prev = showImgs[active];
-    active = (active + dir + FLEET.length) % FLEET.length;
-    const next = showImgs[active];
+  const fillBar = () => {
     const car = FLEET[active];
-    layoutRail();
+    const p = pool();
+    fb.brand.textContent = car.brandName;
+    fb.count.textContent = `${pad(p.indexOf(active) + 1)} / ${pad(p.length)}`;
+    fb.name.textContent = car.name;
+    fb.desc.textContent = car.desc;
+    fb.type.textContent = car.type;
+    fb.more.textContent = `+${car.more} nearby`;
+    fb.amount.textContent = money(car.price);
+  };
+  fillBar();
 
-    const textEls = [fbName, fbDesc, fbAmount];
-    const tl = gsap.timeline({ onComplete: () => { busy = false; prev.classList.remove("is-active"); gsap.set(prev, { clearProps: "all" }); } });
-    tl.to(prev, { xPercent: -14 * dir, autoAlpha: 0, filter: "blur(12px)", duration: 0.6, ease: "power2.in" }, 0)
-      .add(() => next.classList.add("is-active"), 0.35)
-      .fromTo(next, { xPercent: 18 * dir, autoAlpha: 0, filter: "blur(12px)" },
-        { xPercent: 0, autoAlpha: 1, filter: "blur(0px)", duration: 0.9, ease: "power3.out", clearProps: "filter,transform" }, 0.35)
-      .to(textEls, { autoAlpha: 0, y: -10, duration: 0.25, ease: "power1.in", stagger: 0.03 }, 0)
-      .add(() => fillBar(car), 0.3)
-      .fromTo(textEls, { y: 12 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.05 }, 0.35);
+  let busy = false;
+  const showCar = (next, dir) => {
+    if (busy || next === active) return;
+    busy = true;
+    const prevImg = showImgs[active];
+    active = next;
+    const nextImg = showImgs[active];
+    layoutRail();
+    const textEls = [fb.name, fb.desc, fb.amount, fb.brand, fb.type];
+    gsap.timeline({ onComplete: () => { busy = false; prevImg.classList.remove("is-active"); gsap.set(prevImg, { clearProps: "all" }); } })
+      .to(prevImg, { xPercent: -14 * dir, autoAlpha: 0, filter: "blur(12px)", duration: 0.55, ease: "power2.in" }, 0)
+      .add(() => nextImg.classList.add("is-active"), 0.32)
+      .fromTo(nextImg, { xPercent: 18 * dir, autoAlpha: 0, filter: "blur(12px)" },
+        { xPercent: 0, autoAlpha: 1, filter: "blur(0px)", duration: 0.9, ease: "power3.out", clearProps: "filter,transform" }, 0.32)
+      .to(textEls, { autoAlpha: 0, y: -10, duration: 0.22, ease: "power1.in", stagger: 0.02 }, 0)
+      .add(fillBar, 0.28)
+      .fromTo(textEls, { y: 12 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.04 }, 0.32);
+  };
+  const go = (dir) => {
+    const p = pool();
+    const i = p.indexOf(active);
+    showCar(p[(i + dir + p.length) % p.length], dir);
   };
   $(".fb-prev").addEventListener("click", () => go(-1));
   $(".fb-next").addEventListener("click", () => go(1));
 
-  // keyboard + swipe while the showcase is on screen
-  const showcaseVisible = () => getComputedStyle(showcase).visibility === "visible" && colTl.scrollTrigger.isActive;
+  const tabsHTML = (sel) => [`<button class="tab" role="tab" data-brand="" aria-selected="${!sel}">All<sup>${FLEET.length}</sup></button>`]
+    .concat(BRANDS.map((b) => `<button class="tab" role="tab" data-brand="${b.id}" aria-selected="${sel === b.id}">${b.short}<sup>${countOf(b.id)}</sup></button>`)).join("");
+
+  const brandTabs = $(".brand-tabs");
+  const renderFleetTabs = () => { brandTabs.innerHTML = tabsHTML(filter); };
+  renderFleetTabs();
+  brandTabs.addEventListener("click", (e) => {
+    const t = e.target.closest(".tab");
+    if (!t || busy) return;
+    filter = t.dataset.brand || null;
+    renderFleetTabs();
+    const p = pool();
+    if (p.includes(active)) fillBar();
+    else showCar(p[0], 1);
+  });
+
+  const showcaseVisible = () => colStage.classList.contains("is-showcase") && colTl.scrollTrigger.isActive;
   addEventListener("keydown", (e) => {
     if (!$(".specs").hidden || !showcaseVisible()) return;
     if (e.key === "ArrowRight") go(1);
     if (e.key === "ArrowLeft") go(-1);
   });
   let tx = null;
-  showcase.parentElement.addEventListener("touchstart", (e) => { tx = e.touches[0].clientX; }, { passive: true });
-  showcase.parentElement.addEventListener("touchend", (e) => {
-    if (tx === null || !showcaseVisible()) return;
+  colStage.addEventListener("touchstart", (e) => { tx = e.touches[0].clientX; }, { passive: true });
+  colStage.addEventListener("touchend", (e) => {
+    if (tx === null || !showcaseVisible() || e.target.closest(".brand-tabs")) return;
     const dx = e.changedTouches[0].clientX - tx;
     if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
     tx = null;
   });
 
   /* =========================================================
-     3. EXPERIENCE + 4. NIGHT
+     3. GARAGE
      ========================================================= */
-  gsap.fromTo(".exp-head .w", wordsFrom, {
-    ...wordsTo, stagger: 0.05,
-    scrollTrigger: { trigger: ".exp-head", start: "top 85%", end: "top 35%", scrub: 1 }
+  const garageTabs = $(".garage-tabs");
+  const garageGrid = $(".garage-grid");
+  let garageFilter = null;
+  const renderGarage = (animate) => {
+    garageTabs.innerHTML = tabsHTML(garageFilter);
+    const cars = FLEET.map((c, i) => ({ c, i })).filter(({ c }) => !garageFilter || c.brand === garageFilter);
+    garageGrid.innerHTML = cars.map(({ c, i }) => `
+      <button class="g-card" data-i="${i}" aria-label="${c.full}, ${money(c.price)} per day. View specifications">
+        <span class="g-top"><span>${c.brandName}</span><span>${c.type}</span></span>
+        <span class="g-img"><img src="${c.img}" alt="" loading="lazy"></span>
+        <span class="g-foot">
+          <span><span class="g-name">${c.name}</span><span class="g-price"><strong>${money(c.price)}</strong> / day</span></span>
+          <span class="g-go"><svg><use href="#arrow"/></svg></span>
+        </span>
+      </button>`).join("");
+    if (animate) {
+      gsap.fromTo(".g-card", { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, ease: "power3.out", stagger: 0.035 });
+      ScrollTrigger.refresh();
+    }
+  };
+  renderGarage(false);
+  garageTabs.addEventListener("click", (e) => {
+    const t = e.target.closest(".tab");
+    if (!t) return;
+    garageFilter = t.dataset.brand || null;
+    renderGarage(true);
+  });
+  garageGrid.addEventListener("click", (e) => {
+    const card = e.target.closest(".g-card");
+    if (card) openSpecs(+card.dataset.i);
+  });
+  gsap.set(".g-card", { autoAlpha: 0 });
+  ScrollTrigger.batch(".g-card", {
+    start: "top 92%", once: true,
+    onEnter: (els) => gsap.fromTo(els, { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.9, ease: "power3.out", stagger: 0.06 })
+  });
+
+  /* =========================================================
+     4. SECTION REVEALS
+     ========================================================= */
+  $$(".sec-head").forEach((head) => {
+    gsap.fromTo($$(".w", head), wordsFrom, {
+      ...wordsTo, stagger: 0.05,
+      scrollTrigger: { trigger: head, start: "top 85%", end: "top 35%", scrub: 1 }
+    });
   });
   gsap.from(".step", {
     y: 60, autoAlpha: 0, duration: 1.1, ease: "power3.out", stagger: 0.12,
@@ -240,6 +309,10 @@
     xPercent: 30, autoAlpha: 0, duration: 1.4, ease: "power3.out", stagger: 0.12, clearProps: "transform",
     scrollTrigger: { trigger: ".steps", start: "top 85%" }
   });
+  gsap.from(".tier", {
+    y: 60, autoAlpha: 0, duration: 1.1, ease: "power3.out", stagger: 0.12,
+    scrollTrigger: { trigger: ".tiers", start: "top 85%" }
+  });
   $$(".stat-num").forEach((el) => {
     const end = +el.dataset.count;
     const o = { v: 0 };
@@ -248,7 +321,6 @@
       onEnter: () => gsap.to(o, { v: end, duration: reduce ? 0 : 1.6, ease: "power3.out", onUpdate: () => (el.textContent = Math.round(o.v)) })
     });
   });
-  ScrollTrigger.create({ trigger: ".experience", start: "top 50%", end: "bottom 50%", onToggle: (s) => s.isActive && setActive("experience") });
 
   gsap.fromTo(".night-quote .w", wordsFrom, {
     ...wordsTo, stagger: 0.05,
@@ -263,23 +335,29 @@
     onToggle: (s) => { tone.night = s.isActive; applyTone(); }
   });
 
+  [["garage", ".garage"], ["how", ".how"], ["membership", ".membership"], [null, ".reserve-sec"]].forEach(([id, sel]) => {
+    ScrollTrigger.create({ trigger: sel, start: "top 50%", end: "bottom 50%", onToggle: (s) => s.isActive && setActive(id) });
+  });
+
   /* =========================================================
      5. RESERVE FORM
      ========================================================= */
   const form = $(".reserve");
   const sel = $("#f-car");
-  sel.innerHTML = FLEET.map((c, i) => `<option value="${i}">${c.name} · ${money(c.price)}/day</option>`).join("");
+  const planSel = $("#f-plan");
+  sel.innerHTML = BRANDS.map((b) => `<optgroup label="${b.name}">` +
+    FLEET.map((c, i) => c.brand === b.id ? `<option value="${i}">${c.full} · ${money(c.price)}/day</option>` : "").join("") +
+    `</optgroup>`).join("");
   const fFrom = $("#f-from"), fTo = $("#f-to");
   const iso = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
-  const day = 864e5;
   const today = new Date();
   fFrom.min = fTo.min = iso(today);
-  fFrom.value = iso(new Date(+today + day));
-  fTo.value = iso(new Date(+today + 2 * day));
+  fFrom.value = iso(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
+  fTo.value = iso(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2));
 
   const updateEstimate = () => {
     const car = FLEET[+sel.value];
-    let days = Math.round((new Date(fTo.value) - new Date(fFrom.value)) / day);
+    let days = Math.round((new Date(fTo.value) - new Date(fFrom.value)) / 864e5);
     if (!(days >= 1)) days = 1;
     $(".est").textContent = money(car.price * days);
     $(".est-days").textContent = days + (days === 1 ? " day" : " days");
@@ -306,24 +384,25 @@
     const car = FLEET[+sel.value];
     const first = $("#f-name").value.trim().split(" ")[0];
     msg.className = "form-msg ok";
-    msg.textContent = `Thanks, ${first}. Your ${car.name} request is in. A concierge will call to confirm.`;
+    msg.textContent = `Thanks, ${first}. Your ${car.full} request is in. A concierge will call to confirm.`;
     form.querySelector("button[type=submit]").textContent = "Request sent";
   });
   form.addEventListener("input", (e) => e.target.closest(".field")?.classList.remove("is-invalid"));
-
   const preselect = (i) => { sel.value = String(i); updateEstimate(); };
-  ScrollTrigger.create({ trigger: ".contact", start: "top 50%", end: "bottom 50%", onToggle: (s) => s.isActive && setActive("contact") });
 
   /* =========================================================
      SPECS DRAWER
      ========================================================= */
   const specs = $(".specs");
   const panel = $(".specs-panel");
+  let specsCar = 0;
   let lastFocus = null;
-  const openSpecs = () => {
-    const car = FLEET[active];
+  function openSpecs(i = active) {
+    specsCar = i;
+    const car = FLEET[i];
     $(".specs-car img").src = car.img;
-    $(".specs-car img").alt = car.name;
+    $(".specs-car img").alt = car.full;
+    $(".specs-brand").textContent = `${car.brandName} · ${car.type}`;
     $(".specs-name").textContent = car.name;
     $(".specs-desc").textContent = car.desc;
     $(".specs-price").textContent = money(car.price);
@@ -335,7 +414,7 @@
     gsap.fromTo(panel, { xPercent: 105 }, { xPercent: 0, duration: 0.7, ease: "power4.out" });
     gsap.fromTo(".specs-car img", { xPercent: 20, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 1, delay: 0.15, ease: "power3.out" });
     $(".specs-close").focus();
-  };
+  }
   const closeSpecs = () => {
     gsap.to(".specs-scrim", { opacity: 0, duration: 0.3 });
     gsap.to(panel, {
@@ -343,11 +422,11 @@
       onComplete: () => { specs.hidden = true; lenis && lenis.start(); lastFocus && lastFocus.focus({ preventScroll: true }); }
     });
   };
-  $(".fb-specs").addEventListener("click", openSpecs);
+  $(".fb-specs").addEventListener("click", () => openSpecs(active));
   specs.addEventListener("click", (e) => {
     const c = e.target.closest("[data-close]");
     if (!c) return;
-    if (c.matches("a")) { e.preventDefault(); preselect(active); closeSpecs(); setTimeout(() => goTo("#contact"), 350); return; }
+    if (c.matches("a")) { e.preventDefault(); preselect(specsCar); closeSpecs(); setTimeout(() => goTo("#reserve"), 350); return; }
     closeSpecs();
   });
   addEventListener("keydown", (e) => { if (e.key === "Escape" && !specs.hidden) closeSpecs(); });
@@ -355,20 +434,21 @@
   /* =========================================================
      ANCHORS + MOBILE MENU
      ========================================================= */
-  const goTo = (hash) => {
+  function goTo(hash) {
     if (hash === "#top") return scrollToY(0);
     if (hash === "#fleet") {
       const st = colTl.scrollTrigger;
       return scrollToY(st.start + (st.end - st.start) * 0.93);
     }
     const el = $(hash);
-    if (el) scrollToY(el.getBoundingClientRect().top + scrollY - (hash === "#contact" ? 40 : 0));
-  };
+    if (el) scrollToY(el.getBoundingClientRect().top + scrollY - (hash === "#reserve" ? 40 : 0));
+  }
 
   const menuBtn = $(".menu-btn"), menu = $(".mobile-menu");
   const setMenu = (open) => {
     menu.hidden = !open;
     menuBtn.setAttribute("aria-expanded", open);
+    menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     document.body.classList.toggle("menu-open", open);
     if (lenis) open ? lenis.stop() : lenis.start();
     if (open) gsap.from(".mobile-menu a", { y: 30, autoAlpha: 0, stagger: 0.05, duration: 0.6, ease: "power3.out" });
@@ -381,10 +461,10 @@
     e.preventDefault();
     if (!menu.hidden) setMenu(false);
     if (a.classList.contains("fb-reserve")) preselect(active);
+    if (a.dataset.plan) planSel.value = a.dataset.plan;
     goTo(a.getAttribute("href"));
   });
 
-  /* ---------- refresh once fonts + images settle ---------- */
   document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
   addEventListener("load", () => ScrollTrigger.refresh());
 })();
