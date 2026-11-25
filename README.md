@@ -20,6 +20,7 @@ Then open http://localhost:5260.
 - `js/fleet.js`: **edit this to change the cars and brands**: name, blurb, price, type, specs and photo credit
 - `js/main.js`: scroll timelines, fleet carousel with brand tabs, garage filter, specs drawer and the reserve form
 - `assets/cars/`: transparent side-view cutouts, all facing left
+- `assets/logos/`: single-colour brand logos from Simple Icons (CC0), cropped tight. Each one's width-to-height `ratio` in `js/fleet.js` keeps them visually even
 - `source-photos/`: the original Wikimedia Commons photos, kept so the cutouts can be redone
 
 ## Adding a car

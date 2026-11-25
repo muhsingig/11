@@ -1,14 +1,16 @@
 // Idlewild fleet. Edit this file to change cars, prices or copy.
 // Images live in assets/cars/ (transparent background, side view, facing left).
 
+// Logos: Simple Icons (CC0), drawn in the site's colours via CSS masks.
 window.BRANDS = [
-  { id: "mercedes", name: "Mercedes-Benz", short: "Mercedes" },
-  { id: "bmw", name: "BMW", short: "BMW" },
-  { id: "porsche", name: "Porsche", short: "Porsche" },
-  { id: "bentley", name: "Bentley", short: "Bentley" },
-  { id: "rolls", name: "Rolls-Royce", short: "Rolls-Royce" },
-  { id: "landrover", name: "Land Rover", short: "Land Rover" },
-  { id: "aston", name: "Aston Martin", short: "Aston Martin" }
+  // ratio = logo width / height (the SVGs are cropped tight), used to size logos evenly
+  { id: "mercedes", name: "Mercedes-Benz", short: "Mercedes", logo: "assets/logos/mercedes.svg", ratio: 1 },
+  { id: "bmw", name: "BMW", short: "BMW", logo: "assets/logos/bmw.svg", ratio: 1 },
+  { id: "porsche", name: "Porsche", short: "Porsche", logo: "assets/logos/porsche.svg", ratio: 0.78 },
+  { id: "bentley", name: "Bentley", short: "Bentley", logo: "assets/logos/bentley.svg", ratio: 3.09 },
+  { id: "rolls", name: "Rolls-Royce", short: "Rolls-Royce", logo: "assets/logos/rollsroyce.svg", ratio: 0.76 },
+  { id: "landrover", name: "Land Rover", short: "Land Rover", logo: "assets/logos/landrover.svg", ratio: 1.9 },
+  { id: "aston", name: "Aston Martin", short: "Aston Martin", logo: "assets/logos/astonmartin.svg", ratio: 4.38 }
 ];
 
 const C = (author, licence, file) => ({ author, licence, file });

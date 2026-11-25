@@ -213,8 +213,20 @@ em { font-style: italic; }
           mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
 }
 .brands-track { display: flex; width: max-content; animation: marquee 44s linear infinite; }
-.brands-track span { display: inline-flex; align-items: center; gap: 4vw; padding-right: 4vw; font-family: var(--serif); font-size: clamp(22px, 2vw, 32px); color: var(--mute-2); white-space: nowrap; }
-.brands-track span::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); opacity: .7; }
+.brand-item { display: inline-flex; align-items: center; gap: 4.5vw; padding-right: 4.5vw; color: #8f897c; }
+.brand-item .bl { --s: clamp(40px, 3.8vw, 60px); }
+.brand-item::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); opacity: .7; }
+
+/* brand logos (Simple Icons, CC0) drawn as masks so they take currentColor */
+.bl {
+  --s: 1.4em; --k: 1;
+  display: inline-block; flex-shrink: 0; vertical-align: middle;
+  width: calc(var(--s) * var(--k)); height: calc(var(--s) / var(--k));
+  background-color: currentColor;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
 @keyframes marquee { to { transform: translateX(-50%); } }
 
 /* ============ 2. Collection / Fleet ============ */
@@ -270,6 +282,10 @@ em { font-style: italic; }
 .tab:hover { color: var(--ink); }
 .tab[aria-selected="true"] { color: var(--ink); background: var(--panel); border-color: var(--line); }
 .tab sup { font-size: 10px; margin-left: 3px; color: var(--mute); }
+.tab-logo { display: inline-flex; align-items: center; padding: 0 12px; }
+.tab-logo .bl { --s: 21px; }
+.brand-tabs .tab-logo { color: #8f897c; }
+.brand-tabs .tab-logo:hover, .brand-tabs .tab-logo[aria-selected="true"] { color: var(--ink); }
 
 .fleet-bar { display: grid; grid-template-columns: 84px minmax(0, 1fr) 170px 160px 84px; gap: 10px; height: 150px; }
 .fb-panel, .fb-arrow { background: var(--panel); border-radius: var(--radius); }
@@ -278,7 +294,9 @@ em { font-style: italic; }
 .fb-arrow svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .fb-info { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 20px 24px; overflow: hidden; }
 .fb-info-text { min-width: 0; }
-.fb-meta { display: flex; gap: 12px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); margin-bottom: 6px; }
+.fb-brand { display: inline-flex; color: var(--ink); }
+.fb-brand .bl { --s: 24px; }
+.fb-meta { display: flex; align-items: center; gap: 12px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); margin-bottom: 6px; }
 .fb-count { color: var(--amber-2); font-variant-numeric: tabular-nums; }
 .fb-name { font-size: clamp(32px, 3vw, 48px); letter-spacing: -.01em; line-height: 1; white-space: nowrap; }
 .fb-desc { margin-top: 10px; max-width: 340px; font-size: 14px; line-height: 1.35; color: var(--mute); }
@@ -308,7 +326,8 @@ em { font-style: italic; }
   transition: background-color .4s var(--ease);
 }
 .g-card:hover { background: var(--panel-2); }
-.g-top { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
+.g-top .bl-card { --s: 26px; color: var(--ink); }
+.g-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
 .g-img { aspect-ratio: 2.25; display: flex; align-items: flex-end; justify-content: center; margin: 18px 0 16px; }
 .g-img img { width: 94%; max-height: 100%; object-fit: contain; object-position: bottom; transition: transform .8s var(--ease); filter: drop-shadow(0 12px 12px rgba(40,30,15,.14)); }
 .g-card:hover .g-img img { transform: translateX(-4%); }
@@ -434,7 +453,8 @@ em { font-style: italic; }
 .specs-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
 .specs-car { background: var(--panel); border-radius: 16px; aspect-ratio: 16 / 9; display: grid; place-items: center; margin-top: 44px; }
 .specs-car img { width: 88%; }
-.specs-brand { margin-top: 24px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
+.specs-brand .bl { --s: 28px; color: var(--ink); }
+.specs-brand { display: flex; align-items: center; gap: 12px; margin-top: 24px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
 .specs-name { margin-top: 6px; font-size: 44px; line-height: 1; }
 .specs-desc { margin-top: 10px; color: #6e695f; font-size: 15px; }
 .specs-list { margin: 26px 0 0; border-top: 1px solid var(--line); }
@@ -501,7 +521,8 @@ em { font-style: italic; }
   .garage-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
   .g-card { padding: 14px 14px 16px; border-radius: 18px; }
   .g-top { font-size: 10px; }
-  .g-top span:last-child { display: none; }
+  .g-top .bl-card { --s: 21px; }
+  .tab-logo .bl { --s: 20px; }
   .g-img { margin: 10px 0; }
   .g-name { font-size: 22px; }
   .g-price { font-size: 13px; margin-top: 4px; }

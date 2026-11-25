@@ -22,9 +22,16 @@
   const scrollToY = (y) => (lenis ? lenis.scrollTo(y, { duration: 1.6 }) : window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" }));
 
   /* ---------- Generated bits ---------- */
+  // brand logo, drawn with a CSS mask so it takes the surrounding text colour
+  const logo = (brandId, cls = "") => {
+    const b = BRANDS.find((x) => x.id === brandId);
+    const k = Math.sqrt(b.ratio).toFixed(3); // equal-area sizing: wide logos get wider and shorter
+    return `<span class="bl ${cls}" style="--k:${k};-webkit-mask-image:url('${b.logo}');mask-image:url('${b.logo}')" role="img" aria-label="${b.name}" title="${b.name}"></span>`;
+  };
+
   const track = $(".brands-track");
-  const brandSpans = BRANDS.map((b) => `<span>${b.name}</span>`).join("");
-  track.innerHTML = brandSpans + brandSpans.replace(/<span>/g, '<span aria-hidden="true">');
+  const brandItems = BRANDS.map((b) => `<span class="brand-item">${logo(b.id)}</span>`).join("");
+  track.innerHTML = brandItems + brandItems.replace(/class="brand-item"/g, 'class="brand-item" aria-hidden="true"');
 
   $(".credit-list").innerHTML = FLEET.map((c) =>
     `<li><a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(c.credit.file.replace(/ /g, "_"))}" target="_blank" rel="noopener">${c.full}</a>: ${c.credit.author} (${c.credit.licence})</li>`
@@ -185,7 +192,7 @@
   const fillBar = () => {
     const car = FLEET[active];
     const p = pool();
-    fb.brand.textContent = car.brandName;
+    fb.brand.innerHTML = logo(car.brand);
     fb.count.textContent = `${pad(p.indexOf(active) + 1)} / ${pad(p.length)}`;
     fb.name.textContent = car.name;
     fb.desc.textContent = car.desc;
@@ -222,7 +229,7 @@
   $(".fb-next").addEventListener("click", () => go(1));
 
   const tabsHTML = (sel) => [`<button class="tab" role="tab" data-brand="" aria-selected="${!sel}">All<sup>${FLEET.length}</sup></button>`]
-    .concat(BRANDS.map((b) => `<button class="tab" role="tab" data-brand="${b.id}" aria-selected="${sel === b.id}">${b.short}<sup>${countOf(b.id)}</sup></button>`)).join("");
+    .concat(BRANDS.map((b) => `<button class="tab tab-logo" role="tab" data-brand="${b.id}" aria-selected="${sel === b.id}" aria-label="${b.name}, ${countOf(b.id)} cars" title="${b.name}">${logo(b.id)}<sup>${countOf(b.id)}</sup></button>`)).join("");
 
   const brandTabs = $(".brand-tabs");
   const renderFleetTabs = () => { brandTabs.innerHTML = tabsHTML(filter); };
@@ -263,7 +270,7 @@
     const cars = FLEET.map((c, i) => ({ c, i })).filter(({ c }) => !garageFilter || c.brand === garageFilter);
     garageGrid.innerHTML = cars.map(({ c, i }) => `
       <button class="g-card" data-i="${i}" aria-label="${c.full}, ${money(c.price)} per day. View specifications">
-        <span class="g-top"><span>${c.brandName}</span><span>${c.type}</span></span>
+        <span class="g-top">${logo(c.brand, "bl-card")}<span>${c.type}</span></span>
         <span class="g-img"><img src="${c.img}" alt="" loading="lazy"></span>
         <span class="g-foot">
           <span><span class="g-name">${c.name}</span><span class="g-price"><strong>${money(c.price)}</strong> / day</span></span>
@@ -402,7 +409,7 @@
     const car = FLEET[i];
     $(".specs-car img").src = car.img;
     $(".specs-car img").alt = car.full;
-    $(".specs-brand").textContent = `${car.brandName} · ${car.type}`;
+    $(".specs-brand").innerHTML = `${logo(car.brand)}<span>${car.type}</span>`;
     $(".specs-name").textContent = car.name;
     $(".specs-desc").textContent = car.desc;
     $(".specs-price").textContent = money(car.price);
